@@ -1,2 +1,2 @@
-# RDS-Scripts
-Repo for RDS scripts
+# RDS-scripts
+Repo for maintaining Rds script
