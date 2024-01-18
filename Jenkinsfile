@@ -18,7 +18,10 @@ pipeline {
     stages {
       stage('Clean Up'){
         steps{
-            deleteDir()
+           // deleteDir()
+            sh 'docker ps -a'
+            sh 'pwd'
+            sh 'ls'
         }
       }
       stage('Liquibase version'){
