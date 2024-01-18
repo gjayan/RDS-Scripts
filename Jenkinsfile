@@ -7,7 +7,7 @@ pipeline {
 
     parameters {
       choice choices: ['update', 'rollback'], description: 'Please select the operation to be performed', name: 'operationParam'
-      choice choices: ['basic', 'state'], description: 'Please select the schema', name: 'schemaParam'
+      choice choices: ['basic', 'state'], description: 'Please select the schema', name: 'schema'
     }
 
     environment {
