@@ -41,7 +41,7 @@ pipeline {
         steps{
           echo '****************LIQUIBASE STATUS************************'
           sh 'liquibase status --url="jdbc:mariadb://${endpoint}/${schemaParam}" --changeLogFile=./${schemaParam}/changelogFile.xml --username=$RDS_CREDS_USR --password=$RDS_CREDS_PSW'
-          env.Proceed = input message: 'Please select to proceed', id: "Update-${BUILD_NUMBER}", ok: 'Proceed'
+          env.Proceed = input message: 'Please select to proceed', id: "Update-${BUILD_NUMBER}", ok: 'Proceed',
           parameters: [choice(name: 'proceedParam', choices: ['Yes', 'No'], description: 'Please choose to proceed')]
         }
       }
