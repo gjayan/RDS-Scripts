@@ -19,7 +19,6 @@ pipeline {
       stage('Clean Up'){
         steps{
            // deleteDir()
-            sh 'docker ps -a'
             sh 'pwd'
             sh 'ls'
         }
