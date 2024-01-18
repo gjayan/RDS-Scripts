@@ -12,7 +12,7 @@ pipeline {
 
     environment {
       endpoint = "database-1.cpogtkusv37n.ap-south-1.rds.amazonaws.com:3306"
-       RDS_CREDS=credentials('RDS-CREDS')
+      RDS_CREDS=credentials('RDS-CREDS')
     }
 
     stages {
@@ -34,15 +34,17 @@ pipeline {
       stage('Validating SQL'){
         steps{
           echo'*************LIQUIBASE VALIDATION*********************'
-           sh 'liquibase validate --url="jdbc:mariadb://${endpoint}/${schemaParam}" --changeLogFile=./${schemaParam}/changelogFile.xml --username=$RDS_CREDS_USR --password=$RDS_CREDS_PSW'
+          sh 'liquibase validate --url="jdbc:mariadb://${endpoint}/${schemaParam}" --changeLogFile=./${schemaParam}/changelogFile.xml --username=$RDS_CREDS_USR --password=$RDS_CREDS_PSW'
         }
       }
       stage('Status'){
         steps{
-          echo '****************LIQUIBASE STATUS************************'
-          sh 'liquibase status --url="jdbc:mariadb://${endpoint}/${schemaParam}" --changeLogFile=./${schemaParam}/changelogFile.xml --username=$RDS_CREDS_USR --password=$RDS_CREDS_PSW'
-          env.Proceed = input message: 'Please select to proceed', id: "Update-${BUILD_NUMBER}", ok: 'Proceed',
-          parameters: [choice(name: 'proceedParam', choices: ['Yes', 'No'], description: 'Please choose to proceed')]
+          script{
+            echo '****************LIQUIBASE STATUS************************'
+            sh 'liquibase status --url="jdbc:mariadb://${endpoint}/${schemaParam}" --changeLogFile=./${schemaParam}/changelogFile.xml --username=$RDS_CREDS_USR --password=$RDS_CREDS_PSW'
+            env.Proceed = input message: 'Please select to proceed', id: "Update-${BUILD_NUMBER}", ok: 'Proceed',
+            parameters: [choice(name: 'proceedParam', choices: ['Yes', 'No'], description: 'Please choose to proceed')]
+          }
         }
       }
       stage('Update'){
@@ -68,7 +70,7 @@ pipeline {
         steps{
           script{
             echo '*************LIQUIBASE ROLLBACK***************************'
-             sh 'liquibase rollback-count --count=1 --url="jdbc:mariadb://${endpoint}/${schemaParam}" --changeLogFile=./${schemaParam}/changelogFile.xml --username=$RDS_CREDS_USR --password=$RDS_CREDS_PSW'
+            sh 'liquibase rollback-count --count=1 --url="jdbc:mariadb://${endpoint}/${schemaParam}" --changeLogFile=./${schemaParam}/changelogFile.xml --username=$RDS_CREDS_USR --password=$RDS_CREDS_PSW'
             echo 'The db commit has been rollback'
           }
         }
