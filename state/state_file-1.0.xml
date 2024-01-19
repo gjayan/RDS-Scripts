@@ -36,6 +36,9 @@
             <column name="currency_code" type="VARCHAR(3)">
                 <constraints nullable="false"/>
             </column>
+            <column name="country_code" type="VARCHAR(5)">
+                <constraints nullable="false"/>
+            </column>
       </createTable>
     </changeSet>
 </databaseChangeLog>
