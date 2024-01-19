@@ -18,7 +18,7 @@ pipeline {
     stages {
       stage('Clean Up'){
         steps{
-           deleteDir()
+           //deleteDir()
             sh 'pwd'
             sh 'ls'
             echo "selected schema is ${schemaParam}"
@@ -51,9 +51,17 @@ pipeline {
         }
       }
       stage('Update'){
-        when{
-          expression {
-            params.operationParam = 'update'
+        // when{
+        //   expression {
+        //     params.operationParam = 'update'
+        //   }
+        // }
+          when {
+          allOf {
+            environment name: 'Proceed', value: 'Yes'
+            expression {
+            params.operationParam == 'update'
+          }
           }
         }
         steps{
