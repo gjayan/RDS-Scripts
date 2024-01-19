@@ -7,7 +7,7 @@ pipeline {
 
     parameters {
       choice choices: ['update', 'rollback'], description: 'Please select the operation to be performed', name: 'operationParam'
-      choice choices: ['basic', 'state'], description: 'Please select the schema', name: 'schema'
+      choice choices: ['basic', 'state'], description: 'Please select the schema', name: 'schemaParam'
     }
 
     environment {
@@ -36,7 +36,7 @@ pipeline {
       stage('Validating SQL'){
         steps{
           echo'*************LIQUIBASE VALIDATION*********************'
-          sh 'liquibase validate --url="jdbc:mariadb://${endpoint}/${schema}" --changeLogFile=./${schema}/changelogFile.xml --username=$RDS_CREDS_USR --password=$RDS_CREDS_PSW'
+          sh 'liquibase validate --url="jdbc:mariadb://${endpoint}/${schemaParam}" --changeLogFile=./${schemaParam}/changelogFile.xml --username=$RDS_CREDS_USR --password=$RDS_CREDS_PSW'
         }
       }
       stage('Status'){
