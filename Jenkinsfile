@@ -37,7 +37,7 @@ pipeline {
           script{
             echo '****************LIQUIBASE STATUS************************'
             sh 'liquibase status --url="jdbc:mariadb://${endpoint}/${schemaParam}" --changeLogFile=./${schemaParam}/changelogFile.xml --username=$RDS_CREDS_USR --password=$RDS_CREDS_PSW'
-            echo '${operationParam} will be performed on ${schemaParam}'
+            echo "${operationParam} will be performed on ${schemaParam}"
             env.Proceed = input message: 'Do you wish to proceed', id: "DB-${BUILD_NUMBER}", ok: 'Proceed',
             parameters: [choice(name: 'proceedParam', choices: ['Yes', 'No'], description: 'Please choose to proceed')]
           }
@@ -56,7 +56,7 @@ pipeline {
           script {
             echo "************LIQUIBASE UPDATE*************************"
             sh 'liquibase update --url="jdbc:mariadb://${endpoint}/${schemaParam}" --changeLogFile=./${schemaParam}/changelogFile.xml --username=$RDS_CREDS_USR --password=$RDS_CREDS_PSW'
-            echo 'The ${schemaParam} has been Updated'
+            echo "The ${schemaParam} has been Updated"
           }
         }
       }      
@@ -71,7 +71,7 @@ pipeline {
           script{
             echo '*************LIQUIBASE ROLLBACK***************************'
             sh 'liquibase rollback-count --count=1 --url="jdbc:mariadb://${endpoint}/${schemaParam}" --changeLogFile=./${schemaParam}/changelogFile.xml --username=$RDS_CREDS_USR --password=$RDS_CREDS_PSW'
-            echo 'The ${schemaParam} has been Rolled back'
+            echo "The ${schemaParam} has been Rolled back"
           }
         }
       }
