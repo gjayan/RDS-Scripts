@@ -21,7 +21,7 @@ pipeline {
            // deleteDir()
             sh 'pwd'
             sh 'ls'
-            echo "selected schema is ${schemaParam}
+            echo "selected schema is ${schemaParam}"
         }
       }
       stage('Liquibase version'){
