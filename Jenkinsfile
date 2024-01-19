@@ -6,7 +6,7 @@ pipeline {
     }
 
     parameters {
-      choice choices: ['update', 'rollback'], description: 'Please select the operation to be performed', name: 'operationParam'
+      choice choices: ['Update', 'Rollback'], description: 'Please select the operation to be performed', name: 'operationParam'
       choice choices: ['basic', 'state'], description: 'Please select the schema', name: 'schemaParam'
     }
 
@@ -16,14 +16,6 @@ pipeline {
     }
 
     stages {
-      stage('Clean Up'){
-        steps{
-           //deleteDir()
-            sh 'pwd'
-            sh 'ls'
-            echo "selected schema is ${schemaParam}"
-        }
-      }
       stage('Liquibase version'){
         steps{
           sh 'liquibase --version'
@@ -45,44 +37,41 @@ pipeline {
           script{
             echo '****************LIQUIBASE STATUS************************'
             sh 'liquibase status --url="jdbc:mariadb://${endpoint}/${schemaParam}" --changeLogFile=./${schemaParam}/changelogFile.xml --username=$RDS_CREDS_USR --password=$RDS_CREDS_PSW'
-            env.Proceed = input message: 'Please select to proceed', id: "Update-${BUILD_NUMBER}", ok: 'Proceed',
+            echo '${operationParam} will be performed on ${schemaParam}'
+            env.Proceed = input message: 'Do you wish to proceed', id: "DB-${BUILD_NUMBER}", ok: 'Proceed',
             parameters: [choice(name: 'proceedParam', choices: ['Yes', 'No'], description: 'Please choose to proceed')]
           }
         }
       }
       stage('Update'){
-        // when{
-        //   expression {
-        //     params.operationParam = 'update'
-        //   }
-        // }
-          when {
+        when {
           allOf {
-            environment name: 'Proceed', value: 'No'
+            environment name: 'Proceed', value: 'Yes'
             expression {
-            params.operationParam == 'update'
-          }
+              params.operationParam == 'Update'
+            }
           }
         }
         steps{
           script {
             echo "************LIQUIBASE UPDATE*************************"
             sh 'liquibase update --url="jdbc:mariadb://${endpoint}/${schemaParam}" --changeLogFile=./${schemaParam}/changelogFile.xml --username=$RDS_CREDS_USR --password=$RDS_CREDS_PSW'
-            echo 'The db has been updated'
+            echo 'The ${schemaParam} has been Updated'
           }
         }
-      }
+      }      
       stage('Rollback'){
-        when{
-          expression{
-            params.operationParam = 'rollback'
+        when {
+          allOf {
+            environment name:'Proceed', value: 'Yes'
+            expression { params.operationParam = 'Rollback'}
           }
         }
         steps{
           script{
             echo '*************LIQUIBASE ROLLBACK***************************'
             sh 'liquibase rollback-count --count=1 --url="jdbc:mariadb://${endpoint}/${schemaParam}" --changeLogFile=./${schemaParam}/changelogFile.xml --username=$RDS_CREDS_USR --password=$RDS_CREDS_PSW'
-            echo 'The db commit has been rollback'
+            echo 'The ${schemaParam} has been Rolled back'
           }
         }
       }
@@ -91,9 +80,7 @@ pipeline {
     post{
       always{
         echo 'Cleaning up the workspace'
-        sh ' ls'
         sh 'rm -rf *'
-        sh 'ls'
         echo 'Workspace has been cleared'
       }
     }
