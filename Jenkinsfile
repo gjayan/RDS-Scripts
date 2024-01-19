@@ -58,7 +58,7 @@ pipeline {
         // }
           when {
           allOf {
-            environment name: 'Proceed', value: 'Yes'
+            environment name: 'Proceed', value: 'No'
             expression {
             params.operationParam == 'update'
           }
